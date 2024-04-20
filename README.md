@@ -1,17 +1,14 @@
 # CSCE4523-Final
 
-## General Info
+- Project Contributors: Zachary Anderson, James Riffel
 
-- Project Contributors: Zachary Anderson, James Riffell
+- This web app uses flask, a python based backend, and react, a JS framework for the frontend UI/UX. This project also expands on AWS's EC2 deployment servers, and its RDS (Relational Database Service) PaaS (Platform as a Service).
 
 ## flask-server
 
-- server.py
-  -
-- venv
-  -
-  - Scripts
-    -
+- ## server.py
+- ## venv
+  - ## scripts
 
 ## client
 
