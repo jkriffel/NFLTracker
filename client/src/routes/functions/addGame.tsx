@@ -5,6 +5,7 @@ import Header from "../../components/Header";
 import { useState } from "react";
 
 function addGame() {
+  // State variable to store form data, and not use refs
   const [formData, setFormData] = useState({
     Game_ID: "",
     Team_1_ID: "",
@@ -14,6 +15,7 @@ function addGame() {
     Date: "",
   });
 
+  // Function to handle input changes for all input fields
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -22,9 +24,24 @@ function addGame() {
     }));
   };
 
+  // Function to handle form submission
   const handleSubmit = (e: any) => {
-    e.preventDefault();
-    // Do something with the form data, like sending it to an API
+    e.preventDefault(); // Prevent default form submission
+
+    // Check if all fields are filled
+    if (
+      !formData.Game_ID ||
+      !formData.Team_1_ID ||
+      !formData.Team_2_ID ||
+      !formData.Score_1 ||
+      !formData.Score_2 ||
+      !formData.Date
+    ) {
+      alert("Please fill all the fields");
+      return;
+    }
+    // API Call to add a game
+    //TODO Add the api
     console.log(formData);
   };
 
