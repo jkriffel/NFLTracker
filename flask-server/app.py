@@ -164,7 +164,222 @@ def addGame():
     except psycopg2.Error as e:
         return jsonify({"error": str(e)}), 500
 
+# NEEDS TESTING - SHOW PLAYERS BY POSITION #
+@app.route('/showPosPlayers', methods=['GET'])
+@cross_origin()
+def showPosPlayers():
+    try:
+        # Get position from query parameters
+        playerPos = request.args.get('playerPos')
+        
+        # Establish a connection to the database
+        connection = get_db_connection()
+        if connection is None:
+            return jsonify({"error": "Failed to connect to the database."}), 500
+        
+        # Create a cursor object
+        cursor = connection.cursor()
 
+        # Execute a query to select players by position
+        cursor.execute("SELECT * FROM player WHERE position = %s", (playerPos,))
+        
+        # Fetch all the rows
+        rows = cursor.fetchall()
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        # Convert the results to JSON
+        results = [{"PlayerID": row[0], "TeamID": row[1], "Name": row[2], "Position": row[3]} for row in rows]
+        return jsonify(results)
+    
+    except psycopg2.Error as e:
+        return jsonify({"error": str(e)}), 500
+
+# NEEDS TESTING - SHOW PLAYERS BY CONFERENCE
+@app.route('/showTeams', methods=['GET'])
+@cross_origin()
+def showTeams():
+    try:
+        
+        # Establish a connection to the database
+        connection = get_db_connection()
+        if connection is None:
+            return jsonify({"error": "Failed to connect to the database."}), 500
+        
+        # Create a cursor object
+        cursor = connection.cursor()
+
+        # NEED TO TEST THIS FUNCTION OUT
+        cursor.execute("""
+            SELECT 
+                t.TeamID, 
+                t.Location, 
+                t.Nickname, 
+                t.Conference, 
+                t.Division,
+                COUNT(CASE WHEN g.TeamId1 = t.TeamID AND g.Score1 > g.Score2 THEN 1 ELSE NULL END) +
+                COUNT(CASE WHEN g.TeamId2 = t.TeamID AND g.Score2 > g.Score1 THEN 1 ELSE NULL END) AS Wins,
+                COUNT(g.GameID) AS TotalGames
+            FROM 
+                team t
+            LEFT JOIN 
+                game g ON t.TeamID = g.TeamId1 OR t.TeamID = g.TeamId2
+            GROUP BY 
+                t.TeamID, t.Location, t.Nickname, t.Conference, t.Division
+            ORDER BY 
+                t.Conference ASC, Wins DESC, TotalGames DESC;
+        """)
+        
+        # Fetch all the rows
+        rows = cursor.fetchall()
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        # Convert the results to JSON
+        results = [{
+            "TeamID": row[0],
+            "Location": row[1],
+            "Nickname": row[2],
+            "Conference": row[3],
+            "Division": row[4],
+            "Wins": row[5],
+            "TotalGames": row[6]
+        } for row in rows]
+
+        return jsonify(results)
+    
+    except psycopg2.Error as e:
+        return jsonify({"error": str(e)}), 500
+    
+    
+# NEEDS TESTING - SHOW TEAM GAMES
+@app.route('/showRecords/<int:teamId>', methods=['GET'])
+@cross_origin()
+def showRecords(teamId):
+    try:
+        # Establish a connection to the database
+        connection = get_db_connection()
+        if connection is None:
+            return jsonify({"error": "Failed to connect to the database."}), 500
+        
+        # Create a cursor object
+        cursor = connection.cursor()
+
+        # Execute a query to select games played by the given team
+        cursor.execute("""
+            SELECT 
+                t1.Location AS TeamLocation, 
+                t1.Nickname AS TeamNickname, 
+                t2.Location AS OpponentLocation, 
+                t2.Nickname AS OpponentNickname,
+                g.Date,
+                g.Score1,
+                g.Score2,
+                CASE 
+                    WHEN (g.TeamId1 = %s AND g.Score1 > g.Score2) OR (g.TeamId2 = %s AND g.Score2 > g.Score1) THEN 'Won'
+                    ELSE 'Lost'
+                END AS Result
+            FROM 
+                game g
+            JOIN 
+                team t1 ON g.TeamId1 = t1.TeamID
+            JOIN 
+                team t2 ON g.TeamId2 = t2.TeamID
+            WHERE 
+                g.TeamId1 = %s OR g.TeamId2 = %s
+            ORDER BY 
+                g.Date DESC;
+        """, (teamId, teamId, teamId, teamId))
+        
+        # Fetch all the rows
+        rows = cursor.fetchall()
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        # Convert the results to JSON
+        results = [{
+            "TeamLocation": row[0],
+            "TeamNickname": row[1],
+            "OpponentLocation": row[2],
+            "OpponentNickname": row[3],
+            "Date": row[4].strftime('%Y-%m-%d'),  # Convert date to string
+            "Score": f"{row[5]} - {row[6]}",  # Display score as "Score1 - Score2"
+            "Result": row[7]
+        } for row in rows]
+
+        return jsonify(results)
+    
+    except psycopg2.Error as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/showDatedRecords', methods=['GET'])
+@cross_origin()
+def showDatedRecords():
+    try:
+        # Get date from query parameters
+        date = request.args.get('date')
+        
+        # Establish a connection to the database
+        connection = get_db_connection()
+        if connection is None:
+            return jsonify({"error": "Failed to connect to the database."}), 500
+        
+        # Create a cursor object
+        cursor = connection.cursor()
+
+        # Execute a query to select games played on the given date
+        cursor.execute("""
+            SELECT 
+                t1.Location AS Team1Location, 
+                t1.Nickname AS Team1Nickname,
+                t2.Location AS Team2Location,
+                t2.Nickname AS Team2Nickname,
+                g.Score1,
+                g.Score2,
+                CASE 
+                    WHEN g.Score1 > g.Score2 THEN t1.Nickname
+                    WHEN g.Score2 > g.Score1 THEN t2.Nickname
+                    ELSE 'Draw'
+                END AS Winner
+            FROM 
+                game g
+            JOIN 
+                team t1 ON g.TeamId1 = t1.TeamID
+            JOIN 
+                team t2 ON g.TeamId2 = t2.TeamID
+            WHERE 
+                g.Date = %s
+            ORDER BY 
+                Team1Nickname;
+        """, (date,))
+        
+        # Fetch all the rows
+        rows = cursor.fetchall()
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        # Convert the results to JSON
+        results = [{
+            "Team1Location": row[0],
+            "Team1Nickname": row[1],
+            "Team2Location": row[2],
+            "Team2Nickname": row[3],
+            "Score": f"{row[4]} - {row[5]}",  # Display score as "Score1 - Score2"
+            "Winner": row[6]
+        } for row in rows]
+
+        return jsonify(results)
+    
+    except psycopg2.Error as e:
+        return jsonify({"error": str(e)}), 500
     
 if __name__ == '__main__':
     app.run(debug=True, port=5432)
