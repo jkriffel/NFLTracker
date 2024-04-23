@@ -1,4 +1,4 @@
-from flask import Flask,jsonify
+from flask import Flask,jsonify,request
 from flask_cors import CORS, cross_origin
 import psycopg2
 from dotenv import load_dotenv
@@ -91,6 +91,43 @@ def getPlayers(teamId):
     
     except psycopg2.Error as e:
         return jsonify({"error": str(e)}), 500
+    
+#!! DONE !!#
+@app.route('/addPlayer')
+@cross_origin()
+def addPlayer():
+    try:
+        # Extract parameters from the query string
+        playerId = request.args.get('playerId')
+        teamId = request.args.get('teamId')
+        playerName = request.args.get('playerName')
+        playerPos = request.args.get('playerPos')
+
+        # Establish a connection to the database
+        connection = get_db_connection()
+        if connection is None:
+            return jsonify({"error": "Failed to connect to the database."}), 500
+        
+        # Create a cursor object
+        cursor = connection.cursor()
+
+        # Execute the INSERT query
+        cursor.execute("INSERT INTO PLAYER VALUES(%s, %s, %s, %s)", (playerId, teamId, playerName, playerPos))
+
+        # Commit the transaction
+        connection.commit()
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        # Return success message
+        return jsonify({"message": "Player added successfully."}), 200
+    
+    except psycopg2.Error as e:
+        return jsonify({"error": str(e)}), 500
+
+
     
 if __name__ == '__main__':
     app.run(debug=True, port=5432)
