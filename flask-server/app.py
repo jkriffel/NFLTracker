@@ -126,6 +126,43 @@ def addPlayer():
     
     except psycopg2.Error as e:
         return jsonify({"error": str(e)}), 500
+    
+#!! DONE !!#
+@app.route('/addGame')
+@cross_origin()
+def addGame():
+    try:
+        # Extract parameters from the query string
+        gameId = request.args.get('gameId')
+        team1Id = request.args.get('team1Id')
+        team2Id = request.args.get('team2Id')
+        score1 = request.args.get('score1')
+        score2 = request.args.get('score2')
+        gameDate = request.args.get('gameDate')
+
+        # Establish a connection to the database
+        connection = get_db_connection()
+        if connection is None:
+            return jsonify({"error": "Failed to connect to the database."}), 500
+        
+        # Create a cursor object
+        cursor = connection.cursor()
+
+        # Execute the INSERT query
+        cursor.execute("INSERT INTO GAME VALUES(%s, %s, %s, %s, %s, %s)", (gameId, team1Id, team2Id, score1, score2, gameDate))
+
+        # Commit the transaction
+        connection.commit()
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        # Return success message
+        return jsonify({"message": "Game added successfully."}), 200
+    
+    except psycopg2.Error as e:
+        return jsonify({"error": str(e)}), 500
 
 
     
