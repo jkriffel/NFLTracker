@@ -3,15 +3,7 @@ import Input from "../../components/Input";
 import SubmitButton from "../../components/SubmitButton";
 import Header from "../../components/Header";
 import { useState } from "react";
-import { useQuery } from "react-query";
 import axios from "axios";
-
-type AddPlayerProps = {
-  playerId: number;
-  teamId: number;
-  playerName: string;
-  playerPos: string;
-};
 
 function addPlayerAPI(
   playerId: number,
@@ -19,16 +11,17 @@ function addPlayerAPI(
   playerName: string,
   playerPos: string
 ) {
-  return useQuery("addPlayer", async () => {
-    const response = await axios.get(
-      `http://127.0.0.1:5000/addPlayer?playerId=${playerId}&teamId=${teamId}&playerName=${playerName}&playerPos=${playerPos}`
-    );
-    return response.data;
+  return axios.get(`http://127.0.0.1:5000/addPlayer`, {
+    params: {
+      playerId,
+      teamId,
+      playerName,
+      playerPos,
+    },
   });
 }
 
 function addPlayer() {
-  // State variable to store form data, and not use refs
   const [formData, setFormData] = useState({
     playerId: "",
     teamId: "",
@@ -36,7 +29,10 @@ function addPlayer() {
     playerPos: "",
   });
 
-  // Function to handle input changes for all input fields
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState({ error: false, message: "" });
+  const [success, setSuccess] = useState(false);
+
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -45,13 +41,9 @@ function addPlayer() {
     }));
   };
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState({ error: false, message: "" });
-  const [success, setSuccess] = useState(false);
+  const handleSubmit = async (e: any) => {
+    e.preventDefault(); // Prevent default form submission behavior
 
-  // Function to handle form submission
-  const handleSubmit = (e: any) => {
-    // Check if all fields are filled
     if (
       !formData.playerId ||
       !formData.teamId ||
@@ -61,28 +53,31 @@ function addPlayer() {
       alert("Please fill all the fields");
       return;
     }
-    // API Call to add a player
-    const data = addPlayerAPI(
-      parseInt(formData.playerId),
-      parseInt(formData.teamId),
-      formData.playerName,
-      formData.playerPos
-    );
 
     setLoading(true);
 
-    if (!data.isLoading) {
-      setLoading(false);
-      if (data.isError) {
-        setError({
-          error: true,
-          message: "Unable to Add player for unforeseen circumstances :)",
-        });
-      }
+    try {
+      const response = await addPlayerAPI(
+        parseInt(formData.playerId),
+        parseInt(formData.teamId),
+        formData.playerName,
+        formData.playerPos
+      );
 
-      if (data.isSuccess) {
-        setSuccess(true);
-      }
+      setLoading(false);
+      setSuccess(true);
+      setFormData({
+        playerId: "",
+        teamId: "",
+        playerName: "",
+        playerPos: "",
+      });
+    } catch (error) {
+      setLoading(false);
+      setError({
+        error: true,
+        message: "Unable to Add player for unforeseen circumstances :)",
+      });
     }
   };
 
