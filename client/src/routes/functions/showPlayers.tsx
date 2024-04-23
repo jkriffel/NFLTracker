@@ -35,7 +35,7 @@ type PlayerTableProps = {
 function PlayerTable({ teamID }: PlayerTableProps) {
   const response = getPlayers(teamID);
 
-  if (response.isLoading) {
+  if (response.isLoading || response.data === undefined) {
     return <div>Loading...</div>;
   }
 
