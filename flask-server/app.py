@@ -164,7 +164,7 @@ def addGame():
     except psycopg2.Error as e:
         return jsonify({"error": str(e)}), 500
 
-# NEEDS TESTING - SHOW PLAYERS BY POSITION #
+#? Working, but needs front end
 @app.route('/showPosPlayers', methods=['GET'])
 @cross_origin()
 def showPosPlayers():
@@ -181,7 +181,7 @@ def showPosPlayers():
         cursor = connection.cursor()
 
         # Execute a query to select players by position
-        cursor.execute("SELECT * FROM player WHERE position = %s", (playerPos,))
+        cursor.execute("SELECT * FROM player WHERE playerpos = %s", (playerPos,))
         
         # Fetch all the rows
         rows = cursor.fetchall()
@@ -197,11 +197,13 @@ def showPosPlayers():
     except psycopg2.Error as e:
         return jsonify({"error": str(e)}), 500
 
-# NEEDS TESTING - SHOW PLAYERS BY CONFERENCE
+#! NEEDS TESTING - SHOW PLAYERS BY CONFERENCE
 @app.route('/showTeams', methods=['GET'])
 @cross_origin()
 def showTeams():
     try:
+        # Get position from query parameters
+        conf = request.args.get('conf')
         
         # Establish a connection to the database
         connection = get_db_connection()
@@ -272,27 +274,27 @@ def showRecords(teamId):
         # Execute a query to select games played by the given team
         cursor.execute("""
             SELECT 
-                t1.Location AS TeamLocation, 
-                t1.Nickname AS TeamNickname, 
-                t2.Location AS OpponentLocation, 
-                t2.Nickname AS OpponentNickname,
-                g.Date,
+                t1.teamlocation AS Team1_Location, 
+                t1.nickname AS Team1_Nickname, 
+                t2.teamlocation AS Team2_Location, 
+                t2.nickname AS Team2_Nickname,
+                g.gamedate,
                 g.Score1,
                 g.Score2,
                 CASE 
-                    WHEN (g.TeamId1 = %s AND g.Score1 > g.Score2) OR (g.TeamId2 = %s AND g.Score2 > g.Score1) THEN 'Won'
+                    WHEN (g.teamid1 = %s AND g.score1 > g.score2) OR (g.teamid2 = %s AND g.score2 > g.score1) THEN 'Won'
                     ELSE 'Lost'
                 END AS Result
             FROM 
                 game g
             JOIN 
-                team t1 ON g.TeamId1 = t1.TeamID
+                team t1 ON g.teamid1 = t1.teamid
             JOIN 
-                team t2 ON g.TeamId2 = t2.TeamID
+                team t2 ON g.teamid2 = t2.teamid
             WHERE 
-                g.TeamId1 = %s OR g.TeamId2 = %s
+                g.teamid1 = %s OR g.teamid2 = %s
             ORDER BY 
-                g.Date DESC;
+                g.gamedate DESC;
         """, (teamId, teamId, teamId, teamId))
         
         # Fetch all the rows
@@ -304,10 +306,10 @@ def showRecords(teamId):
 
         # Convert the results to JSON
         results = [{
-            "TeamLocation": row[0],
-            "TeamNickname": row[1],
-            "OpponentLocation": row[2],
-            "OpponentNickname": row[3],
+            "Team1_Location": row[0],
+            "Team1_Nickname": row[1],
+            "Team2_Location": row[2],
+            "Team2_Nickname": row[3],
             "Date": row[4].strftime('%Y-%m-%d'),  # Convert date to string
             "Score": f"{row[5]} - {row[6]}",  # Display score as "Score1 - Score2"
             "Result": row[7]
