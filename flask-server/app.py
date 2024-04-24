@@ -195,7 +195,7 @@ def getPositions():
     except psycopg2.Error as e:
         return jsonify({"error": str(e)}), 500
 
-#? Working, but needs front end
+#! DONE !# 
 @app.route('/showPosPlayers', methods=['GET'])
 @cross_origin()
 def showPosPlayers():
@@ -228,13 +228,11 @@ def showPosPlayers():
     except psycopg2.Error as e:
         return jsonify({"error": str(e)}), 500
 
-#! NEEDS TESTING - SHOW PLAYERS BY CONFERENCE
+#! Done !#
 @app.route('/showTeams', methods=['GET'])
 @cross_origin()
 def showTeams():
     try:
-        # Get position from query parameters
-        conf = request.args.get('conf')
         
         # Establish a connection to the database
         connection = get_db_connection()
@@ -247,22 +245,22 @@ def showTeams():
         # NEED TO TEST THIS FUNCTION OUT
         cursor.execute("""
             SELECT 
-                t.TeamID, 
-                t.Location, 
-                t.Nickname, 
-                t.Conference, 
-                t.Division,
-                COUNT(CASE WHEN g.TeamId1 = t.TeamID AND g.Score1 > g.Score2 THEN 1 ELSE NULL END) +
-                COUNT(CASE WHEN g.TeamId2 = t.TeamID AND g.Score2 > g.Score1 THEN 1 ELSE NULL END) AS Wins,
-                COUNT(g.GameID) AS TotalGames
+                t.teamid, 
+                t.teamlocation, 
+                t.nickname, 
+                t.conference, 
+                t.division,
+                COUNT(CASE WHEN g.teamid1 = t.teamid AND g.score1 > g.score2 THEN 1 ELSE NULL END) +
+                COUNT(CASE WHEN g.teamid2 = t.teamid AND g.score2 > g.score1 THEN 1 ELSE NULL END) AS Wins,
+                COUNT(g.gameid) AS TotalGames
             FROM 
                 team t
             LEFT JOIN 
-                game g ON t.TeamID = g.TeamId1 OR t.TeamID = g.TeamId2
+                game g ON t.teamid = g.teamid1 OR t.teamid = g.teamid2
             GROUP BY 
-                t.TeamID, t.Location, t.Nickname, t.Conference, t.Division
+                t.teamid, t.teamlocation, t.nickname, t.conference, t.division
             ORDER BY 
-                t.Conference ASC, Wins DESC, TotalGames DESC;
+                t.conference ASC, Wins DESC, TotalGames DESC;
         """)
         
         # Fetch all the rows
