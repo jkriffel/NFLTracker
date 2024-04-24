@@ -164,6 +164,37 @@ def addGame():
     except psycopg2.Error as e:
         return jsonify({"error": str(e)}), 500
 
+#!! DONE !!# 
+# This gets all positions from the player Table in the database
+@app.route('/getPositions')
+@cross_origin()
+def getPositions():
+    try:
+        # Establish a connection to the database
+        connection = get_db_connection()
+        if connection is None:
+            return jsonify({"error": "Failed to connect to the database."}), 500
+        
+        # Create a cursor object
+        cursor = connection.cursor()
+
+        # Execute a query to select players from the specified team
+        cursor.execute("SELECT DISTINCT playerpos from player")
+
+        # Fetch all the rows
+        rows = cursor.fetchall()
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        # Convert the results to JSON
+        results = [{"Position": row[0]} for row in rows]
+        return jsonify(results)
+    
+    except psycopg2.Error as e:
+        return jsonify({"error": str(e)}), 500
+
 #? Working, but needs front end
 @app.route('/showPosPlayers', methods=['GET'])
 @cross_origin()
