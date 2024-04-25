@@ -109,7 +109,7 @@ function TeamTable({ teams }: TeamTableProps) {
 function ShowPlayers() {
   const response = getTeams();
 
-  if (response.isLoading) {
+  if (response.isLoading || response.data === undefined) {
     return <div>Loading...</div>;
   }
 
