@@ -286,11 +286,10 @@ def showTeams():
     except psycopg2.Error as e:
         return jsonify({"error": str(e)}), 500
     
-    
-# NEEDS TESTING - SHOW TEAM GAMES
-@app.route('/showRecords/<int:teamId>', methods=['GET'])
+#SHOW RECORDS VERSION 2 ELECTRIC BOGALOO
+@app.route('/showRecords', methods=['GET'])
 @cross_origin()
-def showRecords(teamId):
+def showRecords():
     try:
         # Establish a connection to the database
         connection = get_db_connection()
@@ -300,38 +299,47 @@ def showRecords(teamId):
         # Create a cursor object
         cursor = connection.cursor()
 
-        # Execute a query to select games played by the given team
-        cursor.execute("""
-            SELECT 
-                t1.teamlocation AS Team1_Location, 
-                t1.nickname AS Team1_Nickname, 
-                t2.teamlocation AS Team2_Location, 
-                t2.nickname AS Team2_Nickname,
-                g.gamedate,
-                g.Score1,
-                g.Score2,
-                CASE 
-                    WHEN (g.teamid1 = %s AND g.score1 > g.score2) OR (g.teamid2 = %s AND g.score2 > g.score1) THEN 'Won'
-                    ELSE 'Lost'
-                END AS Result
-            FROM 
-                game g
-            JOIN 
-                team t1 ON g.teamid1 = t1.teamid
-            JOIN 
-                team t2 ON g.teamid2 = t2.teamid
-            WHERE 
-                g.teamid1 = %s OR g.teamid2 = %s
-            ORDER BY 
-                g.gamedate DESC;
-        """, (teamId, teamId, teamId, teamId))
+        # Execute a query to select games played by the given team or all teams
+        query = """
+        SELECT 
+            t1.teamlocation AS Team1_Location, 
+            t1.nickname AS Team1_Nickname, 
+            t2.teamlocation AS Team2_Location, 
+            t2.nickname AS Team2_Nickname,
+            TO_CHAR(g.gamedate, 'YYYY-MM-DD') AS Date,
+            g.score1 AS Score1,
+            g.score2 AS Score2,
+            CASE 
+                WHEN (g.teamid1 = %s AND g.score1 > g.score2) OR (g.teamid2 = %s AND g.score2 > g.score1) THEN 'Won'
+                ELSE 'Lost'
+            END AS Result
+        FROM 
+            game g
+        JOIN 
+            team t1 ON g.teamid1 = t1.teamid
+        JOIN 
+            team t2 ON g.teamid2 = t2.teamid
+        WHERE 
+            g.teamid1 = %s OR g.teamid2 = %s
+        ORDER BY 
+            g.gamedate DESC;
+        """
         
+        # Execute the query for all teams
+        cursor.execute(query, (None, None, None, None))
+
         # Fetch all the rows
         rows = cursor.fetchall()
 
-        # Close the cursor and connection
+        # Close the cursor
         cursor.close()
+
+        # Close the connection
         connection.close()
+
+        # If no records found
+        if not rows:
+            return jsonify({"message": "No records found."}), 404
 
         # Convert the results to JSON
         results = [{
@@ -339,16 +347,24 @@ def showRecords(teamId):
             "Team1_Nickname": row[1],
             "Team2_Location": row[2],
             "Team2_Nickname": row[3],
-            "Date": row[4].strftime('%Y-%m-%d'),  # Convert date to string
-            "Score": f"{row[5]} - {row[6]}",  # Display score as "Score1 - Score2"
+            "Date": row[4],
+            "Score": f"{row[5]} - {row[6]}",
             "Result": row[7]
         } for row in rows]
 
         return jsonify(results)
     
     except psycopg2.Error as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f"Database error: {str(e)}"}), 500
 
+    finally:
+        # Ensure the connection is closed
+        if connection:
+            connection.close()
+
+
+
+# NEEDS TESTING -- SHOW RECORDS/DATES
 @app.route('/showDatedRecords', methods=['GET'])
 @cross_origin()
 def showDatedRecords():
@@ -366,29 +382,30 @@ def showDatedRecords():
 
         # Execute a query to select games played on the given date
         cursor.execute("""
-            SELECT 
-                t1.Location AS Team1Location, 
-                t1.Nickname AS Team1Nickname,
-                t2.Location AS Team2Location,
-                t2.Nickname AS Team2Nickname,
-                g.Score1,
-                g.Score2,
-                CASE 
-                    WHEN g.Score1 > g.Score2 THEN t1.Nickname
-                    WHEN g.Score2 > g.Score1 THEN t2.Nickname
-                    ELSE 'Draw'
-                END AS Winner
-            FROM 
-                game g
-            JOIN 
-                team t1 ON g.TeamId1 = t1.TeamID
-            JOIN 
-                team t2 ON g.TeamId2 = t2.TeamID
-            WHERE 
-                g.Date = %s
-            ORDER BY 
-                Team1Nickname;
+        SELECT 
+            t1.teamlocation AS Team1Location, 
+            t1.nickname AS Team1Nickname,
+            t2.teamlocation AS Team2Location,
+            t2.nickname AS Team2Nickname,
+            g.score1 AS Score1,
+            g.score2 AS Score2,
+            CASE 
+                WHEN g.score1 > g.score2 THEN t1.nickname
+                WHEN g.score2 > g.score1 THEN t2.nickname
+                ELSE 'Draw'
+            END AS Winner
+        FROM 
+            game g
+        JOIN 
+            team t1 ON g.teamid1 = t1.teamid
+        JOIN 
+            team t2 ON g.teamid2 = t2.teamid
+        WHERE 
+            g.gamedate = %s
+        ORDER BY 
+            Team1Nickname;
         """, (date,))
+
         
         # Fetch all the rows
         rows = cursor.fetchall()
