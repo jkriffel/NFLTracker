@@ -286,10 +286,10 @@ def showTeams():
     except psycopg2.Error as e:
         return jsonify({"error": str(e)}), 500
     
-#SHOW RECORDS VERSION 3 ELECTRIC BOGALOO
-@app.route('/showRecords', methods=['GET'])
+#SHOW RECORDS VERSION 4 ELECTRIC BOGALOO
+@app.route('/showRecords/<int:teamId>', methods=['GET'])
 @cross_origin()
-def showRecords():
+def showRecords(teamId):
     try:
         # Establish a connection to the database
         connection = get_db_connection()
@@ -299,7 +299,7 @@ def showRecords():
         # Create a cursor object
         cursor = connection.cursor()
 
-        # Execute a query to select games played by the given team or all teams
+        # Execute a query to select games played by the given team
         query = """
         SELECT 
             t1.teamlocation AS Team1_Location, 
@@ -310,7 +310,7 @@ def showRecords():
             g.score1 AS Score1,
             g.score2 AS Score2,
             CASE 
-                WHEN (g.teamid1 = t1.teamid AND g.score1 > g.score2) OR (g.teamid2 = t2.teamid AND g.score2 > g.score1) THEN 'Won'
+                WHEN (g.teamid1 = %s AND g.score1 > g.score2) OR (g.teamid2 = %s AND g.score2 > g.score1) THEN 'Won'
                 ELSE 'Lost'
             END AS Result
         FROM 
@@ -319,12 +319,14 @@ def showRecords():
             team t1 ON g.teamid1 = t1.teamid
         JOIN 
             team t2 ON g.teamid2 = t2.teamid
+        WHERE 
+            g.teamid1 = %s OR g.teamid2 = %s
         ORDER BY 
             g.gamedate DESC;
         """
         
-        # Execute the query for all teams
-        cursor.execute(query)
+        # Execute the query for the given teamId
+        cursor.execute(query, (teamId, teamId, teamId, teamId))
 
         # Fetch all the rows
         rows = cursor.fetchall()
@@ -337,7 +339,7 @@ def showRecords():
 
         # If no records found
         if not rows:
-            return jsonify({"message": "No records found."}), 404
+            return jsonify({"message": "No records found for the given team."}), 404
 
         # Convert the results to JSON
         results = [{
@@ -359,6 +361,7 @@ def showRecords():
         # Ensure the connection is closed
         if connection:
             connection.close()
+
 
 
 
