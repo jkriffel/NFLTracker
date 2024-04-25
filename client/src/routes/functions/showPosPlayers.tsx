@@ -102,7 +102,7 @@ function PositionTable({ positions }: PositionTableProps) {
 function ShowPosPlayers() {
   const response = getPositions();
 
-  if (response.isLoading) {
+  if (response.isLoading || response.data === undefined) {
     return <div>Loading...</div>;
   }
 
