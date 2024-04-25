@@ -302,7 +302,7 @@ def showRecords(teamId):
         # Execute a query to select games played by the given team
         query = """
         SELECT 
-            t1.teamlocation AS Team1_Location, 
+            t1.teamlocation AS Team1Location, 
             t1.nickname AS Team1_Nickname, 
             t2.teamlocation AS Team2_Location, 
             t2.nickname AS Team2_Nickname,
@@ -310,8 +310,9 @@ def showRecords(teamId):
             g.score1 AS Score1,
             g.score2 AS Score2,
             CASE 
-                WHEN (g.teamid1 = %s AND g.score1 > g.score2) OR (g.teamid2 = %s AND g.score2 > g.score1) THEN 'Won'
-                ELSE 'Lost'
+                WHEN CAST(g.score1 AS INTEGER) > CAST(g.score2 AS INTEGER) THEN 'Won'
+                WHEN CAST(g.score2 AS INTEGER) > CAST(g.score1 AS INTEGER) THEN 'Lost'
+                ELSE 'Draw'
             END AS Result
         FROM 
             game g
@@ -326,7 +327,7 @@ def showRecords(teamId):
         """
         
         # Execute the query for the given teamId
-        cursor.execute(query, (teamId, teamId, teamId, teamId))
+        cursor.execute(query, (teamId, teamId))
 
         # Fetch all the rows
         rows = cursor.fetchall()
@@ -361,8 +362,6 @@ def showRecords(teamId):
         # Ensure the connection is closed
         if connection:
             connection.close()
-
-
 
 
 
