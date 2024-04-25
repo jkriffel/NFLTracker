@@ -1,7 +1,6 @@
 import HomeLink from "../../components/HomeLink";
 import Header from "../../components/Header";
 
-import { useState } from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
 
@@ -27,21 +26,77 @@ type TeamTableProps = {
 };
 
 function TeamTable({ teams }: TeamTableProps) {
+  let northArray = teams.filter((team) => team.Division === "North");
+  let southArray = teams.filter((team) => team.Division === "South");
+  let eastArray = teams.filter((team) => team.Division === "East");
+  let westArray = teams.filter((team) => team.Division === "West");
+
   return (
     <div className="flex flex-col gap-2 items-center">
-      <div className="flex flex-col gap-2">
-        {teams.map((team: Team) => {
-          return (
-            <div
-              key={team.TeamID}
-              className="justify-center w-full max-w-[15rem] bg-Corp3 rounded-xl p-4 items-center transition-colors hover:bg-Corp4 focus:outline-none "
-            >
-              <p>{team.Nickname}</p>
-              <p>{team.Division}</p>
-              <p>{team.Wins}</p>
-            </div>
-          );
-        })}
+      <div className="flex flex-row gap-2">
+        <div className="flex flex-col gap-2">
+          <p>North Conference</p>
+          {northArray.map((team: Team) => {
+            return (
+              <div
+                key={team.TeamID}
+                className="justify-center w-full max-w-[15rem] bg-Corp3 rounded-xl p-4 items-center transition-colors hover:bg-Corp4 focus:outline-none "
+              >
+                <p>{team.Location + " " + team.Nickname}</p>
+                <p>{"Wins: " + team.Wins}</p>
+                <p>{"Total Games: " + team.TotalGames}</p>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <p>South Conference</p>
+          {southArray.map((team: Team) => {
+            return (
+              <div
+                key={team.TeamID}
+                className="justify-center w-full max-w-[15rem] bg-Corp3 rounded-xl p-4 items-center transition-colors hover:bg-Corp4 focus:outline-none "
+              >
+                <p>{team.Location + " " + team.Nickname}</p>
+                <p>{"Wins: " + team.Wins}</p>
+                <p>{"Total Games: " + team.TotalGames}</p>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <p>East Conference</p>
+          {eastArray.map((team: Team) => {
+            return (
+              <div
+                key={team.TeamID}
+                className="justify-center w-full max-w-[15rem] bg-Corp3 rounded-xl p-4 items-center transition-colors hover:bg-Corp4 focus:outline-none "
+              >
+                <p>{team.Location + " " + team.Nickname}</p>
+                <p>{"Wins: " + team.Wins}</p>
+                <p>{"Total Games: " + team.TotalGames}</p>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <p>West Conference</p>
+          {westArray.map((team: Team) => {
+            return (
+              <div
+                key={team.TeamID}
+                className="justify-center w-full max-w-[15rem] bg-Corp3 rounded-xl p-4 items-center transition-colors hover:bg-Corp4 focus:outline-none "
+              >
+                <p>{team.Location + " " + team.Nickname}</p>
+                <p>{"Wins: " + team.Wins}</p>
+                <p>{"Total Games: " + team.TotalGames}</p>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
