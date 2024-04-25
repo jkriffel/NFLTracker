@@ -47,18 +47,18 @@ function GameTable({ teamID }: GameTableProps) {
   return (
     <div className="grid grid-cols-3 gap-2">
       {games.map((game: Game) => {
-        let color = "bg-green-500";
+        let color = "bg-green-600";
         if (game.Result === "Lost") {
-          color = "bg-red-500";
+          color = "bg-red-300";
         }
         if (game.Result === "Draw") {
-          color = "bg-blue-500";
+          color = "bg-Nature4";
         }
         return (
           <div className="flex flex-col items-center bg-Nature3 gap-2 rounded-xl p-2">
             <div className="flex flex-row gap-2 items-center">
               <p>{game.Date}</p>
-              <p className={color}>{game.Score}</p>
+              <p className={color + " rounded-xl p-1"}>{game.Score}</p>
             </div>
             <div className="flex flex-row items-center gap-2">
               <div
