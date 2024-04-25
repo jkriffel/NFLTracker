@@ -311,21 +311,19 @@ def showRecords(teamId):
             g.score2 AS Score2,
             CASE 
                 WHEN (g.teamid1 = %s AND g.score1 > g.score2) OR (g.teamid2 = %s AND g.score2 > g.score1) THEN 'Won'
-                WHEN (g.teamid1 = %s AND g.score1 < g.score2) OR (g.teamid2 = %s AND g.score2 < g.score1) THEN 'Lost'
-                ELSE 'Draw'
+                ELSE 'Lost'
             END AS Result
         FROM 
             game g
         JOIN 
-    team t1 ON g.teamid1 = t1.teamid
+            team t1 ON g.teamid1 = t1.teamid
         JOIN 
             team t2 ON g.teamid2 = t2.teamid
         WHERE 
             g.teamid1 = %s OR g.teamid2 = %s
         ORDER BY 
             g.gamedate DESC;
-
-                """
+        """
         
         # Execute the query for the given teamId
         cursor.execute(query, (teamId, teamId, teamId, teamId))
@@ -368,7 +366,8 @@ def showRecords(teamId):
 
 
 
-# NEEDS TESTING -- SHOW RECORDS/DATES
+
+# !! DONE !!
 @app.route('/showDatedRecords', methods=['GET'])
 @cross_origin()
 def showDatedRecords():
