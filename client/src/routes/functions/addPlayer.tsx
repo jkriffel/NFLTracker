@@ -57,7 +57,7 @@ function addPlayer() {
     setLoading(true);
 
     try {
-      const response = await addPlayerAPI(
+      await addPlayerAPI(
         parseInt(formData.playerId),
         parseInt(formData.teamId),
         formData.playerName,

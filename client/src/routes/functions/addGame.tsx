@@ -65,7 +65,7 @@ function addGame() {
     setLoading(true);
 
     try {
-      const response = await addGameAPI(
+      await addGameAPI(
         parseInt(formData.gameId),
         parseInt(formData.team1Id),
         parseInt(formData.team2Id),
