@@ -286,7 +286,7 @@ def showTeams():
     except psycopg2.Error as e:
         return jsonify({"error": str(e)}), 500
     
-#SHOW RECORDS VERSION 2 ELECTRIC BOGALOO
+#SHOW RECORDS VERSION 3 ELECTRIC BOGALOO
 @app.route('/showRecords', methods=['GET'])
 @cross_origin()
 def showRecords():
@@ -310,7 +310,7 @@ def showRecords():
             g.score1 AS Score1,
             g.score2 AS Score2,
             CASE 
-                WHEN (g.teamid1 = %s AND g.score1 > g.score2) OR (g.teamid2 = %s AND g.score2 > g.score1) THEN 'Won'
+                WHEN (g.teamid1 = t1.teamid AND g.score1 > g.score2) OR (g.teamid2 = t2.teamid AND g.score2 > g.score1) THEN 'Won'
                 ELSE 'Lost'
             END AS Result
         FROM 
@@ -319,14 +319,12 @@ def showRecords():
             team t1 ON g.teamid1 = t1.teamid
         JOIN 
             team t2 ON g.teamid2 = t2.teamid
-        WHERE 
-            g.teamid1 = %s OR g.teamid2 = %s
         ORDER BY 
             g.gamedate DESC;
         """
         
         # Execute the query for all teams
-        cursor.execute(query, (None, None, None, None))
+        cursor.execute(query)
 
         # Fetch all the rows
         rows = cursor.fetchall()
@@ -361,6 +359,7 @@ def showRecords():
         # Ensure the connection is closed
         if connection:
             connection.close()
+
 
 
 
