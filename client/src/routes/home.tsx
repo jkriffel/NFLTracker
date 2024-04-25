@@ -25,11 +25,11 @@ function Home() {
   const navigation = [
     { name: "Add a Game", path: "/addGame" },
     { name: "Add a Player", path: "/addPlayer" },
-    { name: "View Players", path: "/showPlayers" },
-    { name: "View Position Players", path: "/showPosPlayers" },
-    { name: "View Teams", path: "/showTeams" },
-    { name: "View Game Records", path: "/showRecords" },
-    { name: "View Game Records / Date", path: "/showDatedRecords" },
+    { name: "View All Players", path: "/showPlayers" },
+    { name: "View All Players by Position", path: "/showPosPlayers" },
+    { name: "View All Teams", path: "/showTeams" },
+    { name: "View Game Records by Team", path: "/showRecords" },
+    { name: "View Game Records by Date", path: "/showDatedRecords" },
     { name: "Bonus", path: "/bonus" },
   ];
 
@@ -58,21 +58,5 @@ function Home() {
     </div>
   );
 }
-
-// const [data, setData] = useState();
-
-// useEffect(() => {
-//   const data = async () => {
-//     try {
-//       const data = await axios.get(`http://127.0.0.1:5000/members`);
-//       setData(data.data);
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-//   data();
-// });
-
-// console.log(data);
 
 export default Home;
