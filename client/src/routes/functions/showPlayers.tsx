@@ -47,7 +47,6 @@ function PlayerTable({ teamID }: PlayerTableProps) {
         return (
           <div
             key={player.PlayerID}
-            // className="justify-center bg-Corp3 rounded-xl p-2 items-center transition-colors min-w-[10rem]"
             className="flex flex-col items-center bg-Nature2 rounded-xl p-2"
           >
             <p>{player.Name}</p>
