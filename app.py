@@ -46,7 +46,7 @@ def create_game_table():
         CREATE TABLE IF NOT EXISTS player (
             playerid SERIAL PRIMARY KEY,
             teamid INT,
-            playername VARCHAR(255) PRIMARY KEY,
+            playername VARCHAR(255),
             playerpos VARCHAR(255)
         );
         '''
