@@ -50,9 +50,20 @@ def create_game_table():
             playerpos VARCHAR(255)
         );
         '''
+        
+        #SQL statment to create the player table
+        create_table_query3 = '''
+       CREATE TABLE IF NOT EXISTS team (
+            teamid SERIAL PRIMARY KEY,
+            teamlocation VARCHAR(255),
+            nickname VARCHAR(255),
+            conference VARCHAR(255),
+            division VARCHAR(255)
+        );
+        '''
 
         # Execute the SQL statement to create the table
-        cursor.execute(create_table_query2)
+        cursor.execute(create_table_query3)
 
         # Commit the transaction
         connection.commit()
