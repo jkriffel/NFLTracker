@@ -10,7 +10,7 @@ CORS(app, origins=["https://nfl-frontend-git-main-james-riffels-projects.vercel.
 def get_db_connection():
     try:
         # Parse the database URL
-        db_url = "postgres://khozesckjjquuh:60044915ebbd199711353a37ab20f58cd9ba3dbe08aef0787abc3d0d2a875bda@ec2-52-54-200-216.compute-1.amazonaws.com:5432/d6dpn5at6c3omd"
+        db_url = "postgres://ycitlrjmoktywj:19ed9bf7527f9f1b088c22b6a375bdbde081b1635865d3fae2d9105e16ba85fc@ec2-3-214-103-146.compute-1.amazonaws.com:5432/d8oa6d3du5qn8e"
         parsed_url = urlparse(db_url)
         
         # Extract connection information from the parsed URL
