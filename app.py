@@ -1,23 +1,19 @@
 from flask import Flask,jsonify,request
-from flask_cors import CORS, cross_origin
 import psycopg2
-from dotenv import load_dotenv
 import os
 
-load_dotenv()
 
 app = Flask(__name__)
-CORS(app, origins="http://localhost:5173")
 
 def get_db_connection():
     try:
         # Establish a connection to the PostgreSQL database
         connection = psycopg2.connect(
-            host=os.environ.get('RDS_HOST'),
-            database=os.environ.get('RDS_NAME'),
-            user=os.environ.get('RDS_USER'),
-            password=os.environ.get('RDS_PASS'),
-            port=os.environ.get('RDS_PORT')  
+            host=os.environ.get('ec2-52-54-200-216.compute-1.amazonaws.com'),
+            database=os.environ.get('d6dpn5at6c3omd'),
+            user=os.environ.get('khozesckjjquuh'),
+            password=os.environ.get('60044915ebbd199711353a37ab20f58cd9ba3dbe08aef0787abc3d0d2a875bda'),
+            port=os.environ.get('5432')  
         )
         return connection
     except psycopg2.Error as e:
@@ -26,14 +22,12 @@ def get_db_connection():
 
 
 @app.route('/')
-@cross_origin()
 def index():
     return {"home": ["homevar", "homevar2", "homevar3"]}
 
 #!! DONE !!#
 # This gets all teams from the database
 @app.route('/getTeams')
-@cross_origin()
 def getTeams():
     try:
         # Establish a connection to the database
@@ -64,7 +58,6 @@ def getTeams():
 #!! DONE !!#
 # This takes a teamId and returns all the players in that team
 @app.route('/getPlayers/<string:teamId>')
-@cross_origin()
 def getPlayers(teamId):
     try:
         # Establish a connection to the database
@@ -94,7 +87,6 @@ def getPlayers(teamId):
     
 #!! DONE !!#
 @app.route('/addPlayer')
-@cross_origin()
 def addPlayer():
     try:
         # Extract parameters from the query string
@@ -129,7 +121,6 @@ def addPlayer():
     
 #!! DONE !!#
 @app.route('/addGame')
-@cross_origin()
 def addGame():
     try:
         # Extract parameters from the query string
@@ -167,7 +158,6 @@ def addGame():
 #!! DONE !!# 
 # This gets all positions from the player Table in the database
 @app.route('/getPositions')
-@cross_origin()
 def getPositions():
     try:
         # Establish a connection to the database
@@ -197,7 +187,6 @@ def getPositions():
 
 #! DONE !# 
 @app.route('/showPosPlayers', methods=['GET'])
-@cross_origin()
 def showPosPlayers():
     try:
         # Get position from query parameters
@@ -230,7 +219,6 @@ def showPosPlayers():
 
 #! Done !#
 @app.route('/showTeams', methods=['GET'])
-@cross_origin()
 def showTeams():
     try:
         
@@ -288,7 +276,6 @@ def showTeams():
     
 #SHOW RECORDS VERSION 5 ELECTRIC BOGALOO
 @app.route('/showRecords/<int:teamId>', methods=['GET'])
-@cross_origin()
 def showRecords(teamId):
     try:
         # Establish a connection to the database
@@ -368,7 +355,6 @@ def showRecords(teamId):
 
 # !! DONE !!
 @app.route('/showDatedRecords', methods=['GET'])
-@cross_origin()
 def showDatedRecords():
     try:
         # Get date from query parameters
