@@ -62,25 +62,9 @@ def create_game_table():
         );
         '''
         query = '''
-            DELETE FROM game 
-            WHERE 
-                (teamid1 = 1 AND teamid2 = 2 AND score1 = '3' AND score2 = '2' AND gamedate = '2024-04-27')
-                OR
-                (teamid1 = 3 AND teamid2 = 4 AND score1 = '1' AND score2 = '1' AND gamedate = '2024-04-28');
-
-            DELETE FROM player 
-            WHERE 
-                (playerid = 1 AND teamid = 1 AND playername = 'John Doe' AND playerpos = 'Forward')
-            OR
-                (playerid = 2 AND teamid = 2 AND playername = 'Jane Smith' AND playerpos = 'Guard');
-
-            DELETE FROM team 
-            WHERE 
-                (teamlocation = 'New York' AND nickname = 'Knicks' AND conference = 'Eastern' AND division = 'Atlantic')
-                OR
-                (teamlocation = 'Los Angeles' AND nickname = 'Lakers' AND conference = 'Western' AND division = 'Pacific');
- 
-
+            DELETE FROM player;
+            DELETE FROM team;
+            DELETE FROM game;
         '''
         
         query2 = '''
@@ -88,7 +72,7 @@ def create_game_table():
 
         '''
         # Execute the SQL statement to create the table
-        cursor.execute(query2)
+        cursor.execute(query)
 
         # Commit the transaction
         connection.commit()
