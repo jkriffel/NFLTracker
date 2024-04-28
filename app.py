@@ -1,20 +1,34 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 import psycopg2
+import os
+from urllib.parse import urlparse
 
 app = Flask(__name__)
 CORS(app, origins=["https://nfl-frontend-git-main-james-riffels-projects.vercel.app", "https://cscedbfinal-git-master-zeandersons-projects.vercel.app"])
 
 def get_db_connection():
     try:
+        # Parse the database URL
+        db_url = "postgres://khozesckjjquuh:60044915ebbd199711353a37ab20f58cd9ba3dbe08aef0787abc3d0d2a875bda@ec2-52-54-200-216.compute-1.amazonaws.com:5432/d6dpn5at6c3omd"
+        parsed_url = urlparse(db_url)
+        
+        # Extract connection information from the parsed URL
+        db_host = parsed_url.hostname
+        db_port = parsed_url.port
+        db_user = parsed_url.username
+        db_password = parsed_url.password
+        db_name = parsed_url.path.lstrip('/')
+        
         # Establish a connection to the PostgreSQL database
         connection = psycopg2.connect(
-            host='ec2-52-54-200-216.compute-1.amazonaws.com',
-            database='d6dpn5at6c3omd',
-            user='khozesckjjquuh',
-            password='60044915ebbd199711353a37ab20f58cd9ba3dbe08aef0787abc3d0d2a875bda',
-            port='5432'
+            host=db_host,
+            database=db_name,
+            user=db_user,
+            password=db_password,
+            port=db_port
         )
+        
         return connection
     except psycopg2.Error as e:
         print("Error while connecting to PostgreSQL:", e)
