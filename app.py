@@ -68,27 +68,23 @@ def create_game_table():
         );
         '''
         query = '''
-            -- Insert teams
         INSERT INTO team (teamlocation, nickname, conference, division) 
         VALUES 
             ('Dallas', 'Cowboys', 'NFC', 'East'),
             ('Green Bay', 'Packers', 'NFC', 'North'),
             ('New England', 'Patriots', 'AFC', 'East');
 
-        -- Insert players
         INSERT INTO player (playerid, teamid, playername, playerpos) 
         VALUES 
             (1, 1, 'John Smith', 'Quarterback'),
             (2, 2, 'Mike Johnson', 'Wide Receiver'),
             (3, 3, 'David Brown', 'Linebacker');
 
-        -- Insert games
         INSERT INTO game (teamid1, teamid2, score1, score2, gamedate) 
         VALUES 
             (1, 2, 24, 21, '2024-04-27'),
             (2, 3, 28, 17, '2024-04-28'),
             (3, 1, 31, 28, '2024-04-29');
-
         '''
         
         # Execute the SQL statement to create the table
