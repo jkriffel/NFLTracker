@@ -67,7 +67,7 @@ def create_game_table():
             division VARCHAR(255)
         );
         '''
-        query = '''
+        query = """
         INSERT INTO team (teamlocation, nickname, conference, division) 
         VALUES 
             ('Dallas', 'Cowboys', 'NFC', 'East'),
@@ -85,7 +85,10 @@ def create_game_table():
             (1, 2, 24, 21, '2024-04-27'),
             (2, 3, 28, 17, '2024-04-28'),
             (3, 1, 31, 28, '2024-04-29');
-        '''
+        """
+
+# Now you can execute this query using your preferred method
+
         
         # Execute the SQL statement to create the table
         cursor.execute(query)
