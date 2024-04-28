@@ -29,16 +29,17 @@ def create_game_table():
         # Create a cursor object
         cursor = connection.cursor()
 
-        # SQL statement to create the game table
+        # SQL statement to drop existing tables if they exist
         droptable = """
-        DROP TABLE game;
-        DROP TABLE player;
-        DROP TABLE team;
+        DROP TABLE IF EXISTS game;
+        DROP TABLE IF EXISTS player;
+        DROP TABLE IF EXISTS team;
         """
         
+        # SQL statement to create the game table
         create_table_query1 = '''
         CREATE TABLE IF NOT EXISTS game (
-            gameid INT PRIMARY KEY,
+            gameid SERIAL PRIMARY KEY,
             teamid1 INT,
             teamid2 INT,
             score1 VARCHAR(255),
@@ -47,59 +48,68 @@ def create_game_table():
         );
         '''
         
-        #SQL statment to create the player table
+        # SQL statement to create the player table
         create_table_query2 = '''
         CREATE TABLE IF NOT EXISTS player (
-            playerid INT,
+            playerid SERIAL PRIMARY KEY,
             teamid INT,
-            playername VARCHAR(255) PRIMARY KEY,
+            playername VARCHAR(255),
             playerpos VARCHAR(255)
         );
         '''
         
-        #SQL statment to create the player table
+        # SQL statement to create the team table
         create_table_query3 = '''
         CREATE TABLE IF NOT EXISTS team (
-            teamid INT PRIMARY KEY,
+            teamid SERIAL PRIMARY KEY,
             teamlocation VARCHAR(255),
             nickname VARCHAR(255),
             conference VARCHAR(255),
             division VARCHAR(255)
         );
         '''
-        query = """
-        INSERT INTO team (teamlocation, nickname, conference, division) 
-        VALUES 
+        
+        # SQL statement to insert data into the team table
+        team_data = [
             ('Dallas', 'Cowboys', 'NFC', 'East'),
             ('Green Bay', 'Packers', 'NFC', 'North'),
-            ('New England', 'Patriots', 'AFC', 'East');
-
-        INSERT INTO player (playerid, teamid, playername, playerpos) 
-        VALUES 
+            ('New England', 'Patriots', 'AFC', 'East')
+        ]
+        
+        # SQL statement to insert data into the player table
+        player_data = [
             (1, 1, 'John Smith', 'Quarterback'),
             (2, 2, 'Mike Johnson', 'Wide Receiver'),
-            (3, 3, 'David Brown', 'Linebacker');
-
-        INSERT INTO game (teamid1, teamid2, score1, score2, gamedate) 
-        VALUES 
+            (3, 3, 'David Brown', 'Linebacker')
+        ]
+        
+        # SQL statement to insert data into the game table
+        game_data = [
             (1, 2, 24, 21, '2024-04-27'),
             (2, 3, 28, 17, '2024-04-28'),
-            (3, 1, 31, 28, '2024-04-29');
-        """
-
-# Now you can execute this query using your preferred method
-
+            (3, 1, 31, 28, '2024-04-29')
+        ]
         
-        # Execute the SQL statement to create the table
-        cursor.execute(query)
+        # Execute the SQL statement to drop existing tables
+        cursor.execute(droptable)
+
+        # Execute the SQL statements to create the tables
+        cursor.execute(create_table_query1)
+        cursor.execute(create_table_query2)
+        cursor.execute(create_table_query3)
+        
+        # Execute the SQL statements to insert data into the tables
+        cursor.executemany("INSERT INTO team (teamlocation, nickname, conference, division) VALUES (%s, %s, %s, %s)", team_data)
+        cursor.executemany("INSERT INTO player (playerid, teamid, playername, playerpos) VALUES (%s, %s, %s, %s)", player_data)
+        cursor.executemany("INSERT INTO game (teamid1, teamid2, score1, score2, gamedate) VALUES (%s, %s, %s, %s, %s)", game_data)
 
         # Commit the transaction
         connection.commit()
 
-        print("Game table created successfully.")
+        print("Tables created and data inserted successfully.")
 
     except psycopg2.Error as e:
-        print("Error while creating game table:", e)
+        print("Error:", e)
 
     finally:
         # Close the cursor and connection
