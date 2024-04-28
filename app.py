@@ -53,7 +53,7 @@ def create_game_table():
         
         #SQL statment to create the player table
         create_table_query3 = '''
-       CREATE TABLE IF NOT EXISTS team (
+        CREATE TABLE IF NOT EXISTS team (
             teamid SERIAL PRIMARY KEY,
             teamlocation VARCHAR(255),
             nickname VARCHAR(255),
