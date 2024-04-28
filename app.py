@@ -92,7 +92,7 @@ def create_game_table():
         '''
         
         # Execute the SQL statement to create the table
-        cursor.execute(create_table_query3)
+        cursor.execute(query)
 
         # Commit the transaction
         connection.commit()
