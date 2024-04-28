@@ -3,7 +3,7 @@ from flask_cors import CORS, cross_origin
 import psycopg2
 
 app = Flask(__name__)
-CORS(app, origins=["https://nfl-frontend-git-main-james-riffels-projects.vercel.app/", "https://cscedbfinal-git-master-zeandersons-projects.vercel.app"])
+CORS(app, origins=["https://nfl-frontend-git-main-james-riffels-projects.vercel.app", "https://cscedbfinal-git-master-zeandersons-projects.vercel.app"])
 
 def get_db_connection():
     try:
