@@ -30,29 +30,29 @@ def create_game_table():
         cursor = connection.cursor()
 
         # SQL statement to create the game table
-        #create_table_query = '''
-        #CREATE TABLE IF NOT EXISTS game (
-            #gameid SERIAL PRIMARY KEY,
-            #teamid1 INT,
-            #teamid2 INT,
-            #score1 VARCHAR(255),
-            #score2 VARCHAR(255),
-            #gamedate DATE
-        #);
-        #'''
+        create_table_query1 = '''
+        CREATE TABLE IF NOT EXISTS game (
+            gameid SERIAL PRIMARY KEY,
+            teamid1 INT,
+            teamid2 INT,
+            score1 VARCHAR(255),
+            score2 VARCHAR(255),
+            gamedate DATE
+        );
+        '''
         
         #SQL statment to create the player table
-        create_table_query = '''
-        CREATE TABLE player (
-        playerid SERIAL PRIMARY KEY,
-        teamid INT,
-        playername VARCHAR(255) PRIMARY KEY,
-        playerpos VARCHAR(255)
+        create_table_query2 = '''
+        CREATE TABLE IF NOT EXISTS player (
+            playerid SERIAL PRIMARY KEY,
+            teamid INT,
+            playername VARCHAR(255) PRIMARY KEY,
+            playerpos VARCHAR(255)
         );
         '''
 
         # Execute the SQL statement to create the table
-        cursor.execute(create_table_query)
+        cursor.execute(create_table_query2)
 
         # Commit the transaction
         connection.commit()
