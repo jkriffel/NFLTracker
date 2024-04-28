@@ -61,9 +61,28 @@ def create_game_table():
             division VARCHAR(255)
         );
         '''
+        query = '''
+        INSERT INTO game (teamid1, teamid2, score1, score2, gamedate) 
+        VALUES (1, 2, '3', '2', '2024-04-27');
 
+        INSERT INTO game (teamid1, teamid2, score1, score2, gamedate) 
+        VALUES (3, 4, '1', '1', '2024-04-28');
+        
+        INSERT INTO player (playerid, teamid, playername, playerpos) 
+        VALUES (1, 1, 'John Doe', 'Forward');
+
+        INSERT INTO player (playerid, teamid, playername, playerpos) 
+        VALUES (2, 2, 'Jane Smith', 'Guard');
+        
+        INSERT INTO team (teamlocation, nickname, conference, division) 
+        VALUES ('New York', 'Knicks', 'Eastern', 'Atlantic');
+
+        INSERT INTO team (teamlocation, nickname, conference, division) 
+        VALUES ('Los Angeles', 'Lakers', 'Western', 'Pacific');
+
+        '''
         # Execute the SQL statement to create the table
-        cursor.execute(create_table_query3)
+        cursor.execute(query)
 
         # Commit the transaction
         connection.commit()
