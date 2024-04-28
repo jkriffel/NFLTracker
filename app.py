@@ -1,6 +1,5 @@
-from flask import Flask,jsonify,request
+from flask import Flask, jsonify, request
 import psycopg2
-
 
 app = Flask(__name__)
 
@@ -19,10 +18,54 @@ def get_db_connection():
         print("Error while connecting to PostgreSQL:", e)
         return None
 
+def create_game_table():
+    try:
+        # Connect to the database
+        connection = get_db_connection()
+        if connection is None:
+            print("Failed to connect to the database.")
+            return
+
+        # Create a cursor object
+        cursor = connection.cursor()
+
+        # SQL statement to create the game table
+        create_table_query = '''
+        CREATE TABLE IF NOT EXISTS game (
+            gameid SERIAL PRIMARY KEY,
+            teamid1 INT,
+            teamid2 INT,
+            score1 VARCHAR(255),
+            score2 VARCHAR(255),
+            gamedate DATE
+        );
+        '''
+
+        # Execute the SQL statement to create the table
+        cursor.execute(create_table_query)
+
+        # Commit the transaction
+        connection.commit()
+
+        print("Game table created successfully.")
+
+    except psycopg2.Error as e:
+        print("Error while creating game table:", e)
+
+    finally:
+        # Close the cursor and connection
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+# Call the function to create the game table
+create_game_table()
 
 @app.route('/')
 def index():
     return {"home": ["homevar", "homevar2", "homevar3"]}
+
 
 #!! DONE !!#
 # This gets all teams from the database
