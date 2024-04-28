@@ -39,7 +39,7 @@ def create_game_table():
         # SQL statement to create the game table
         create_table_query1 = '''
         CREATE TABLE IF NOT EXISTS game (
-            gameid SERIAL PRIMARY KEY,
+            gameid INT PRIMARY KEY,
             teamid1 INT,
             teamid2 INT,
             score1 VARCHAR(255),
@@ -51,9 +51,9 @@ def create_game_table():
         # SQL statement to create the player table
         create_table_query2 = '''
         CREATE TABLE IF NOT EXISTS player (
-            playerid SERIAL PRIMARY KEY,
+            playerid INT,
             teamid INT,
-            playername VARCHAR(255),
+            playername VARCHAR(255) PRIMARY KEY,
             playerpos VARCHAR(255)
         );
         '''
@@ -61,7 +61,7 @@ def create_game_table():
         # SQL statement to create the team table
         create_table_query3 = '''
         CREATE TABLE IF NOT EXISTS team (
-            teamid SERIAL PRIMARY KEY,
+            teamid INT PRIMARY KEY,
             teamlocation VARCHAR(255),
             nickname VARCHAR(255),
             conference VARCHAR(255),
