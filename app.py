@@ -1,6 +1,5 @@
 from flask import Flask,jsonify,request
 import psycopg2
-import os
 
 
 app = Flask(__name__)
@@ -9,11 +8,11 @@ def get_db_connection():
     try:
         # Establish a connection to the PostgreSQL database
         connection = psycopg2.connect(
-            host=os.environ.get('ec2-52-54-200-216.compute-1.amazonaws.com'),
-            database=os.environ.get('d6dpn5at6c3omd'),
-            user=os.environ.get('khozesckjjquuh'),
-            password=os.environ.get('60044915ebbd199711353a37ab20f58cd9ba3dbe08aef0787abc3d0d2a875bda'),
-            port=os.environ.get('5432')  
+            host='ec2-52-54-200-216.compute-1.amazonaws.com',
+            database='d6dpn5at6c3omd',
+            user='khozesckjjquuh',
+            password='60044915ebbd199711353a37ab20f58cd9ba3dbe08aef0787abc3d0d2a875bda',
+            port='5432'
         )
         return connection
     except psycopg2.Error as e:
@@ -418,4 +417,4 @@ def showDatedRecords():
         return jsonify({"error": str(e)}), 500
     
 if __name__ == '__main__':
-    app.run(debug=True, port=5432)
+    app.run(debug=True)
