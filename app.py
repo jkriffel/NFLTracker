@@ -1,7 +1,9 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS, cross_origin
 import psycopg2
 
 app = Flask(__name__)
+CORS(app, origins=["http://localhost:5173/", "https://cscedbfinal-git-master-zeandersons-projects.vercel.app"])
 
 def get_db_connection():
     try:
@@ -122,6 +124,7 @@ def create_game_table():
 create_game_table()
 
 @app.route('/')
+@cross_origin()
 def index():
     return {"home": ["homevar", "homevar2", "homevar3"]}
 
@@ -129,6 +132,7 @@ def index():
 #!! DONE !!#
 # This gets all teams from the database
 @app.route('/getTeams')
+@cross_origin()
 def getTeams():
     try:
         # Establish a connection to the database
@@ -159,6 +163,7 @@ def getTeams():
 #!! DONE !!#
 # This takes a teamId and returns all the players in that team
 @app.route('/getPlayers/<string:teamId>')
+@cross_origin()
 def getPlayers(teamId):
     try:
         # Establish a connection to the database
@@ -188,6 +193,7 @@ def getPlayers(teamId):
     
 #!! DONE !!#
 @app.route('/addPlayer')
+@cross_origin()
 def addPlayer():
     try:
         # Extract parameters from the query string
@@ -222,6 +228,7 @@ def addPlayer():
     
 #!! DONE !!#
 @app.route('/addGame')
+@cross_origin()
 def addGame():
     try:
         # Extract parameters from the query string
@@ -259,6 +266,7 @@ def addGame():
 #!! DONE !!# 
 # This gets all positions from the player Table in the database
 @app.route('/getPositions')
+@cross_origin()
 def getPositions():
     try:
         # Establish a connection to the database
@@ -288,6 +296,7 @@ def getPositions():
 
 #! DONE !# 
 @app.route('/showPosPlayers', methods=['GET'])
+@cross_origin()
 def showPosPlayers():
     try:
         # Get position from query parameters
@@ -320,6 +329,7 @@ def showPosPlayers():
 
 #! Done !#
 @app.route('/showTeams', methods=['GET'])
+@cross_origin()
 def showTeams():
     try:
         
@@ -377,6 +387,7 @@ def showTeams():
     
 #SHOW RECORDS VERSION 5 ELECTRIC BOGALOO
 @app.route('/showRecords/<int:teamId>', methods=['GET'])
+@cross_origin()
 def showRecords(teamId):
     try:
         # Establish a connection to the database
@@ -456,6 +467,7 @@ def showRecords(teamId):
 
 # !! DONE !!
 @app.route('/showDatedRecords', methods=['GET'])
+@cross_origin()
 def showDatedRecords():
     try:
         # Get date from query parameters
