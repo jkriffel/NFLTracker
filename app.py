@@ -8,10 +8,10 @@ def get_db_connection():
     try:
         # Establish a connection to the PostgreSQL database
         connection = psycopg2.connect(
-            host='csce-db-instance.chmcioi00kj5.us-east-2.rds.amazonaws.com',
-            database='postgres',
+            host='ec2-52-54-200-216.compute-1.amazonaws.com',
+            database='d6dpn5at6c3omd',
             user='khozesckjjquuh',
-            password='RcTrucks42069!',
+            password='60044915ebbd199711353a37ab20f58cd9ba3dbe08aef0787abc3d0d2a875bda',
             port='5432'
         )
         return connection
