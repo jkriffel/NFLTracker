@@ -30,14 +30,24 @@ def create_game_table():
         cursor = connection.cursor()
 
         # SQL statement to create the game table
+        #create_table_query = '''
+        #CREATE TABLE IF NOT EXISTS game (
+            #gameid SERIAL PRIMARY KEY,
+            #teamid1 INT,
+            #teamid2 INT,
+            #score1 VARCHAR(255),
+            #score2 VARCHAR(255),
+            #gamedate DATE
+        #);
+        #'''
+        
+        #SQL statment to create the player table
         create_table_query = '''
-        CREATE TABLE IF NOT EXISTS game (
-            gameid SERIAL PRIMARY KEY,
-            teamid1 INT,
-            teamid2 INT,
-            score1 VARCHAR(255),
-            score2 VARCHAR(255),
-            gamedate DATE
+        CREATE TABLE player (
+        playerid SERIAL PRIMARY KEY,
+        teamid INT,
+        playername VARCHAR(255) PRIMARY KEY,
+        playerpos VARCHAR(255)
         );
         '''
 
